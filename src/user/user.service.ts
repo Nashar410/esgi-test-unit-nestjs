@@ -70,4 +70,14 @@ export class UserService {
     return unsecureCryptPassword.replace(Constants.UNESECURE_SALT, '');
   }
 
+  isValid(user: User){
+    try{
+      let dto = new CreateUserDto(user);
+      return true;
+    } catch (e){
+      throw "the exception is " + e;
+      return false;
+    }
+  }
+
 }
