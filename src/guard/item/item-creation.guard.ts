@@ -28,15 +28,18 @@ export class ItemCreationGuard implements CanActivate {
     const item = await this.itemService.findLastItemOfTodolist(todolistId);
 
     // Si pas d'item, on peut ajouter
-    if (!item.length) return true;
+    if (item.length <= 0) return true;
 
     // L'item est présent, on vérifie
     if (!!item[0].createdDate) {
       // Il y a une date, on la compare à la date actuelle
       // Si le résultat de la soustraction du temps de la date enregistrée
       // et celui de la date actuelle est infierieur à la limite, on refuse l'accès
-      return ((item[0].createdDate.getTime() - new Date().getTime()) < Constants.LIMIT_BETWEEN_CREATION)
+      let timeBetweenDate = new Date().getTime() - item[0].createdDate.getTime();
+
+      return !(timeBetweenDate < Constants.LIMIT_BETWEEN_CREATION)
     }
+
     return true;
   }
 }

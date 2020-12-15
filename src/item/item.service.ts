@@ -32,8 +32,9 @@ export class ItemService {
   sendMail(items: Item[]) {
     if (items.length === Constants.ITEM_NUMBER_TO_SEND_MAIL) {
       // On récupère le mail de l'user
-      this.mailerService.sendMail(items[0].todolist.user.email, Constants.MAIL_ITEM_CAPACITY_SOON_EXCEED);
+      return this.mailerService.sendMail(items[0].todolist.user.email, Constants.MAIL_ITEM_CAPACITY_SOON_EXCEED);
     }
+    return false;
   }
 
   /**

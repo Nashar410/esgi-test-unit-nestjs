@@ -18,7 +18,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         synchronize: true,
         migrations: [
           __dirname + "/../**/migrations/*.ts"
-        ]
+        ],
+        keepConnectionAlive: true
       }),
     })
   ],

@@ -9,12 +9,13 @@ import { Constants } from "../constants";
 export class MatchMinimumAgeValidatorConstraint implements ValidatorConstraintInterface{
     validate(birthDate: any, validationArguments?: ValidationArguments): boolean | Promise<boolean> {
         // Si pas de date, c'est faux
-        if (!birthDate && !(birthDate instanceof Date)) {
+        if (!birthDate || !(birthDate instanceof Date)) {
             return false;
         }
 
         // Calcul de l'âge
         const today = new Date();
+        birthDate = birthDate as Date;
         let age = today.getFullYear() - birthDate.getFullYear();
         const m = today.getMonth() - birthDate.getMonth();
 
