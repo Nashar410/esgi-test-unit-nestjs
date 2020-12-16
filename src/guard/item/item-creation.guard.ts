@@ -10,9 +10,7 @@ export class ItemCreationGuard implements CanActivate {
 
   constructor(private itemService: ItemService) { }
   
-  async canActivate(
-    context: ExecutionContext,
-  ): Promise<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     return this.resolve(context
       .switchToHttp()
       .getRequest()
@@ -22,7 +20,7 @@ export class ItemCreationGuard implements CanActivate {
       .id);
   }
 
-    async resolve(todolistId: string) {
+  async resolve(todolistId: string) {
     
     // On récupère la liste des items
     const item = await this.itemService.findLastItemOfTodolist(todolistId);

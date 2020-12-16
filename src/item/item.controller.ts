@@ -3,13 +3,15 @@ import { ItemService } from './item.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { ItemCreationGuard } from 'src/guard/item/item-creation.guard';
+import { CanUserCreateItemGuard } from 'src/guard/item/can-user-create-item.guard';
 
 @Controller('item')
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}
 
-  @Post()
+  @UseGuards(CanUserCreateItemGuard)
   @UseGuards(ItemCreationGuard)
+  @Post()
   create(@Body() createItemDto: CreateItemDto) {
     return this.itemService.create(createItemDto);
   }

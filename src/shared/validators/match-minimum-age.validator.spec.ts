@@ -29,7 +29,6 @@ describe('MatchMinimumAgeValidator', () => {
     it('Cas date valide', () => {
         let dateValid: Date = new Date();
         dateValid.setMonth(dateValid.getMonth() - (12 * 18));
-        console.log(dateValid);
         expect(matchMinimumAgeValidator.validate(dateValid)).toBeTruthy();
     });
 });
