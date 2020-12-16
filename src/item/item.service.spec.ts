@@ -128,8 +128,6 @@ describe('ItemService', () => {
         todolist: mockTodo
       })
     }
-    console.log("should mail", items.length);
-
     jest.spyOn(mailerServiceFake, "sendMail").mockImplementation(() => true);
     expect(service.sendMail(items)).toBeDefined();
   });

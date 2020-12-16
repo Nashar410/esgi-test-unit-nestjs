@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString, IsUUID, Length } from "class-validator";
 import { IsItemNameUnique } from "src/shared/validators/item-name-unique.validator";
 import { Todolist } from "src/todolist/entities/todolist.entity";
+import { User } from "src/user/entities/user.entity";
 
 export class CreateItemDto {
 

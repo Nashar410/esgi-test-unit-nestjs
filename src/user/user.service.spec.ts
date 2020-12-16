@@ -4,11 +4,13 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
 import { Todolist } from "../todolist/entities/todolist.entity";
 import { AppModule } from 'src/app.module';
+import { Constants } from 'src/shared/constants';
 
-class UserRepositoryFake{ }
+class UserRepositoryFake{}
 
 describe('UserService', () => {
   let service: UserService;
+  let mockUser;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -21,47 +23,58 @@ describe('UserService', () => {
     }).compile();
 
     service = module.get<UserService>(UserService);
+
+    const mockTodo = new Todolist();
+    mockTodo.id = "8aaf437c-3308-4ece-93e3-8b1745e7760a";
+
+    mockUser = {
+      birthDate: new Date(1980,11,30),
+      email: "toto@toto.fr",
+      firstname: "toto",
+      id: "9bbf437c-3308-4ece-93e3-8b1745e7760b",
+      isValid: undefined,
+      lastname: "tata",
+      password: "regsgdsgrdsg",
+      todolist: mockTodo
+    }
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  it('should create a user', async ()=> {
-    const mockTodo = new Todolist();
-    mockTodo.id = "1";
-
-    const mockUser : User = {
-      birthDate: new Date(1998,11,30),
-      email: "toto@toto.fr",
-      firstname: "toto",
-      id: "1",
-      isValid: true,
-      lastname: "tata",
-      password: "regsgdsgrdsg",
-      todolist: mockTodo
-
-    }
-    // jest.spyOn(service, "isValid").mockImplementation(() =>  );
-    expect(service.create(mockUser)).toBeDefined();
+  it('should be ok : right user', async () => {
+    expect(await service.isValid(mockUser) === mockUser).toBeTruthy();
   });
 
-  it('shouldn\'t valid', async ()=> {
-    const mockTodo = new Todolist();
-    mockTodo.id = "1";
-
-    const mockUser : User = {
-      birthDate: new Date(2020,11,30),
-      email: "toto@toto.fr",
-      firstname: "toto",
-      id: "2",
-      isValid: true,
-      lastname: "tata",
-      password: "regsgdsgrdsg",
-      todolist: mockTodo
-    }
-    
-    expect(service.isValid(mockUser) !== mockUser).toBeTruthy();
+  it('shouldn\'t valid : Bad mail', async () => {
+    mockUser.email = "a";
+    await expect(service.isValid(mockUser)).rejects.toThrow(Constants.ERROR_MSG_IS_EMAIL);
   });
 
+  it('shouldn\'t valid : Bad id - none UUID', async () => {
+    mockUser.id = "a";
+    await expect(service.isValid(mockUser)).rejects.toThrow(Constants.ERROR_MSG_IS_UUID);
+  });
+
+  it('shouldn\'t valid : Bad birthdate - wrong type', async () => {
+    mockUser.birthDate = "a";
+    await expect(service.isValid(mockUser)).rejects.toThrow(Constants.ERROR_MSG_IS_DATE);
+  });
+
+  it('shouldn\'t valid : Bad birthdate - far too young', async () => {
+    mockUser.birthDate = new Date(2020, 10, 12);
+    await expect(service.isValid(mockUser)).rejects.toThrow(Constants.ERROR_MSG_USER_WRONG_AGE);
+  });
+
+  it('shouldn\'t valid : Bad birthdate - too young at one day', async () => {
+    let birthDate = new Date();
+
+    birthDate.setFullYear(birthDate.getFullYear() - Constants.AGE_LIMIT);
+
+    // Add 3 day to the birth day, it means the the user will have 13 in 3 day
+    birthDate.setDate(birthDate.getDate() + 3);
+    mockUser.birthDate = birthDate;
+    await expect(service.isValid(mockUser)).rejects.toThrow(Constants.ERROR_MSG_USER_WRONG_AGE);
+  });
 });
