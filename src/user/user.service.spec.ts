@@ -3,19 +3,20 @@ import { UserService } from './user.service';
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
 import { Todolist } from "../todolist/entities/todolist.entity";
+import { AppModule } from 'src/app.module';
 
-class MailerServiceFake {}
-class ItemReposirotyFake {}
+class UserRepositoryFake{ }
 
 describe('UserService', () => {
   let service: UserService;
-  let userRepositoryFake;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UserService,
+      imports: [AppModule],
+      providers: [
+        UserService,
         {
           provide: getRepositoryToken(User),
-          useClass: userRepositoryFake
+          useClass: UserRepositoryFake
         }],
     }).compile();
 
@@ -58,10 +59,9 @@ describe('UserService', () => {
       lastname: "tata",
       password: "regsgdsgrdsg",
       todolist: mockTodo
-
     }
-    jest.spyOn(service, "isValid").mockImplementation(() => false );
-    expect(service.create(mockUser)).toBeFalsy();
+    
+    expect(service.isValid(mockUser) !== mockUser).toBeTruthy();
   });
 
 });

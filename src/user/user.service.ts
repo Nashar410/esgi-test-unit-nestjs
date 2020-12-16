@@ -72,11 +72,9 @@ export class UserService {
 
   isValid(user: User){
     try{
-      let dto = new CreateUserDto(user);
-      return true;
+      return new CreateUserDto(user);
     } catch (e){
       throw "the exception is " + e;
-      return false;
     }
   }
 

@@ -15,7 +15,6 @@ class ItemReposirotyFake {}
 
 describe('ItemService', () => {
   let service: ItemService;
-  let itemReposirotyFake;
   let todolistServiceFake;
   let mailerServiceFake; 
 
