@@ -21,4 +21,20 @@ describe('AppController (e2e)', () => {
       .expect(200)
       .expect('Hello World!');
   });
+
+  it('/user (POST) is not valid', () => {
+    return request(app.getHttpServer())
+      .post('/user')
+      .send({
+        birthDate: new Date(2020,11,30),
+        email: "toto@toto.fr",
+        firstname: "toto",
+        id: "2",
+        isValid: true,
+        lastname: "tata",
+        password: "regsgdsgrdsg",
+        todolist: undefined
+      }).set('Content-type', 'application/json')
+      .expect(400);
+  });
 });
