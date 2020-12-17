@@ -60,13 +60,13 @@ describe('CanUserCreateItemGuard', () => {
 
   it('should let the user create an item', async () => {
 
-    jest.spyOn(userService, 'isValid').mockImplementation(() => true);
+    jest.spyOn(userService, 'isValid').mockImplementation(() => user);
     expect(await canUserCreateItemGuard.resolve(user)).toBeTruthy();
   });
 
   it(`shouldn't let the user create an item because it's not valid`, async () => {
-    jest.spyOn(userService, 'isValid').mockImplementation(() => false);
-    expect(await canUserCreateItemGuard.resolve(user)).toBeFalsy();
+    jest.spyOn(userService, 'isValid').mockImplementation(() => { throw new Error('ok')});
+    await expect(canUserCreateItemGuard.resolve(user)).rejects.toThrow('ok');
   });
 
 });

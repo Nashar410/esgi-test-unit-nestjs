@@ -48,32 +48,33 @@ describe('ItemService', () => {
     mailerServiceFake = module.get<MailerService>(MailerService);
 
     // data
+    mockTodo = new Todolist({id: "1"});
+
     item = new Item({
       id: "1",
-      name: "a",
+      name: "zza",
       content: "e",
       createdDate: new Date(),
       todolist: mockTodo,
     });
+
     jest.spyOn(todolistServiceFake, "findAllItems").mockImplementation(() => [
       {
         id: "10",
         name: "a",
         content: "e",
         createdDate: new Date(),
-        todolist: undefined,
+        todolist: mockTodo,
       },
       {
         id: "2",
         name: "999",
         content: "7777e",
         createdDate: new Date(),
-        todolist: undefined,
+        todolist: mockTodo,
       }
     ]);
 
-    //data
-    mockTodo = new Todolist({id: "1"});
 
   });
 
@@ -85,14 +86,7 @@ describe('ItemService', () => {
     expect(await service.isItemUniqueInTodolist(item)).toBeTruthy();
   });
 
-  it('should say that the item isnt unique', () => {
-    const item: Item = {
-      id: "1",
-      name: "a",
-      content: "e",
-      createdDate: new Date(),
-      todolist: mockTodo,
-    };
+  it('should say that the item isnt unique', async () => {
     jest.spyOn(todolistServiceFake, "findAllItems").mockImplementation(() => [
       {
         id: "10",
@@ -114,10 +108,11 @@ describe('ItemService', () => {
         content: "e",
         createdDate: new Date(),
         todolist: mockTodo,
-      }
+      },
+      item
     ]);
 
-    expect(service).toBeDefined();
+    expect(await service.isItemUniqueInTodolist(item)).toBeFalsy();
   });
 
   it('should send mail', () => {

@@ -81,9 +81,11 @@ export class ItemService {
     // Push du nouvelle item
     items.push(item);
 
-    // Réponse sur l'unicité donnée ; Set élémine les duplicats, il faut juste comparer
+    // Réponse sur l'unicité donnée ; 
     // les size après coup
-    return new Set(items).size !== items.length
+    const withoutDup = this.removeDuplicates(items, 'name'); 
+    return withoutDup.length === items.length 
+
   }
 
   /**
@@ -102,4 +104,17 @@ export class ItemService {
       take: 1
     });
   }
+
+  private removeDuplicates(array, key) {
+    let lookup = {};
+    let result = [];
+    array.forEach(element => {
+        if(!lookup[element[key]]) {
+            lookup[element[key]] = true;
+            result.push(element);
+        }
+    });
+    return result;
+  }
+  
 }
