@@ -58,6 +58,21 @@ describe('UserService', () => {
     await expect(service.isValid(mockUser)).rejects.toThrow(Constants.ERROR_MSG_IS_UUID);
   });
 
+  it('shouldn\'t valid : Bad length password', async () => {
+    mockUser.password = "sqgsg";
+    await expect(service.isValid(mockUser)).rejects.toThrow(Constants.ERROR_MSG_LENGTH_PWD);
+  });
+
+  it('shouldn\'t valid : lastname doesn\'t exist', async () => {
+    mockUser.firstname = "";
+    await expect(service.isValid(mockUser)).rejects.toThrow(Constants.ERROR_MSG_IS_NOT_EMPTY);
+  });
+
+  it('shouldn\'t valid : firstname doesn\'t exist', async () => {
+    mockUser.lastname = "";
+    await expect(service.isValid(mockUser)).rejects.toThrow(Constants.ERROR_MSG_IS_NOT_EMPTY);
+  });
+
   it('shouldn\'t valid : Bad birthdate - wrong type', async () => {
     mockUser.birthDate = "a";
     await expect(service.isValid(mockUser)).rejects.toThrow(Constants.ERROR_MSG_IS_DATE);
