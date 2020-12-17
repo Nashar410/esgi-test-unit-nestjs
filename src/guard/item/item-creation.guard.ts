@@ -27,6 +27,7 @@ export class ItemCreationGuard implements CanActivate {
 
     // Si pas d'item, on peut ajouter
     if (item.length <= 0) return true;
+    if (item.length <= Constants.MAX_ITEM_LENGTH) return false;
 
     // L'item est présent, on vérifie
     if (!!item[0].createdDate) {

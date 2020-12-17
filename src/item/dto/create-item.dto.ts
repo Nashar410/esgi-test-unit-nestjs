@@ -1,26 +1,29 @@
 import { IsNotEmpty, IsString, IsUUID, Length } from "class-validator";
+import { Constants } from "src/shared/constants";
 import { IsItemNameUnique } from "src/shared/validators/item-name-unique.validator";
 import { Todolist } from "src/todolist/entities/todolist.entity";
-import { User } from "src/user/entities/user.entity";
 
 export class CreateItemDto {
 
-    @IsUUID()
-    @IsString()
-    @IsNotEmpty()
+    @IsUUID('all', {message: Constants.ERROR_MSG_IS_UUID})
+    @IsString({message: Constants.ERROR_MSG_IS_STRING})
+    @IsNotEmpty({message: Constants.ERROR_MSG_IS_NOT_EMPTY})
     id: string;
 
-    @IsItemNameUnique()
-    @IsString()
-    @IsNotEmpty()
+    @IsItemNameUnique({message: Constants.ERROR_MSG_ITEM_NAME_NOT_UNIQUE})
+    @IsString({message: Constants.ERROR_MSG_IS_STRING})
+    @IsNotEmpty({message: Constants.ERROR_MSG_IS_NOT_EMPTY})
     name: string;
 
-    @Length(1, 1000)
-    @IsString()
-    @IsNotEmpty()
+    @Length(
+        Constants.MIN_CONTENT_LENGTH_STR,
+        Constants.MAX_CONTENT_LENGTH_STR,
+        { message: Constants.ERROR_MSG_LENGTH_CONTENT })
+    @IsString({message: Constants.ERROR_MSG_IS_STRING})
+    @IsNotEmpty({message: Constants.ERROR_MSG_IS_NOT_EMPTY})
     content: string;
 
-    @IsNotEmpty()
+    @IsNotEmpty({message: Constants.ERROR_MSG_IS_NOT_EMPTY})
     todolist: Todolist;    
 
 }

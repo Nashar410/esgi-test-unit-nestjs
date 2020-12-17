@@ -21,6 +21,9 @@ export class ItemService {
   
   async create(createItemDto: CreateItemDto) {
     const item = await this.itemRepository.create(createItemDto);
+    if (!!item) {
+      throw new Error(Constants.ERROR_MSG_ITEM_DIDNT_CREATE);
+    }
     const todolistItems = await this.todolistService.findAllItems(item.todolist.id);
     return this.sendMail(todolistItems)
   }

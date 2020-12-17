@@ -11,6 +11,8 @@ export class Constants {
      *                             Item                              *
      *****************************************************************/
     public static readonly MAX_ITEM_LENGTH = 10;
+    public static readonly MIN_CONTENT_LENGTH_STR = 1;
+    public static readonly MAX_CONTENT_LENGTH_STR = 1000;
     public static readonly LIMIT_BETWEEN_CREATION = 60000 * 30 //30 min
     public static readonly ITEM_NUMBER_TO_SEND_MAIL = 8;
     public static readonly MAIL_ITEM_CAPACITY_SOON_EXCEED =
@@ -32,6 +34,8 @@ export class Constants {
     public static readonly ERROR_MSG_IS_DATE = `Le champ n'est pas une date valide.\n`;
     public static readonly ERROR_MSG_USER_WRONG_AGE = `L'utilisateur doit avoir au moins ${Constants.AGE_LIMIT} ans.\n`
     public static readonly ERROR_MSG_UNKNOWN_ERROR = `Erreur non identifiée\n`;
-
+    public static readonly ERROR_MSG_ITEM_NAME_NOT_UNIQUE = `L'item soumis existe déjà.\n`;
+    public static readonly ERROR_MSG_LENGTH_CONTENT = `Le contenu de l'item soumis doit être comprit entre ${Constants.MIN_CONTENT_LENGTH_STR} et ${Constants.MAX_CONTENT_LENGTH_STR}.\n`;
+    public static readonly ERROR_MSG_ITEM_DIDNT_CREATE = `L'item n'a pas pu être créée\n`;
 
 }
