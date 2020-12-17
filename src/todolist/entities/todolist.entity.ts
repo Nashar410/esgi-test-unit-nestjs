@@ -17,4 +17,8 @@ export class Todolist {
 
     @OneToMany(() => Item, item => item.todolist)
     items: Item[];
+
+    constructor(todo: Partial<Todolist>) {
+        Object.assign(this, todo);
+    }
 }

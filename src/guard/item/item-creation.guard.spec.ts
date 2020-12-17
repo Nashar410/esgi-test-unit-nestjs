@@ -13,13 +13,11 @@ import { ItemCreationGuard } from './item-creation.guard';
 
 const itemInvalid: Item = new Item();
 itemInvalid.createdDate = new Date();
-itemInvalid.todolist = new Todolist();
-itemInvalid.todolist.id = '1';
+itemInvalid.todolist = new Todolist({id:"1"});
 
 const itemValid: Item = new Item();
 itemValid.createdDate = new Date('04 Dec 1995 00:12:00 GMT');
-itemValid.todolist = new Todolist();
-itemValid.todolist.id = '1';
+itemValid.todolist = new Todolist({id:"1"});
 
 
 describe('ItemCreationGuard', () => {

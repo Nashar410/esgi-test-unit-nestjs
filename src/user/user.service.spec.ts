@@ -5,6 +5,8 @@ import { User } from "./entities/user.entity";
 import { Todolist } from "../todolist/entities/todolist.entity";
 import { AppModule } from 'src/app.module';
 import { Constants } from 'src/shared/constants';
+import { UserModule } from './user.module';
+import { ItemModule } from 'src/item/item.module';
 
 class UserRepositoryFake{}
 
@@ -13,7 +15,7 @@ describe('UserService', () => {
   let mockUser;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule, UserModule, ItemModule],
       providers: [
         UserService,
         {
@@ -24,8 +26,7 @@ describe('UserService', () => {
 
     service = module.get<UserService>(UserService);
 
-    const mockTodo = new Todolist();
-    mockTodo.id = "8aaf437c-3308-4ece-93e3-8b1745e7760a";
+    const mockTodo = new Todolist({id: "8aaf437c-3308-4ece-93e3-8b1745e7760a"});
 
     mockUser = {
       birthDate: new Date(1980,11,30),

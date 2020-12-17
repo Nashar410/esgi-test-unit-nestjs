@@ -1,13 +1,11 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class CanUserCreateItemGuard implements CanActivate {
 
-  constructor(private userService: UserService) {
-    
-  }
+  constructor(private userService: UserService) {}
   async canActivate(
     context: ExecutionContext,
   ){
@@ -20,11 +18,12 @@ export class CanUserCreateItemGuard implements CanActivate {
         .params.createItemDto.todolist.user.id
     );
 
+    return await this.resolve(user);
+  }
+
+  async resolve(user: User) {
     // SI l'user existe, on return s'il est valide ou non
     // SI l'user n'existe pas, il n'a pas le droit, on return false
-    return !!user ? !!(await this.userService.isValid(user)) : false;
-
-
-
+    return await !!user ? !!(this.userService.isValid(user)) : false;
   }
 }

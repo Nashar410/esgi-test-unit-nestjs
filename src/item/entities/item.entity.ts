@@ -24,4 +24,10 @@ export class Item {
     @ManyToOne(() => Todolist, todolist => todolist.items)
     todolist: Todolist;    
 
+    constructor(item?: Partial<Item>) {
+        if (!!item) {
+            Object.assign(this, item);
+        }
+    }
+
  }
