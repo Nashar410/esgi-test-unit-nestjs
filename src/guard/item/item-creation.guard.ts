@@ -27,7 +27,7 @@ export class ItemCreationGuard implements CanActivate {
 
     // Si pas d'item, on peut ajouter
     if (item.length <= 0) return true;
-    if (item.length <= Constants.MAX_ITEM_LENGTH) return false;
+    if (item.length > Constants.MAX_ITEM_LENGTH) return false;
 
     // L'item est présent, on vérifie
     if (!!item[0].createdDate) {
@@ -36,7 +36,7 @@ export class ItemCreationGuard implements CanActivate {
       // et celui de la date actuelle est infierieur à la limite, on refuse l'accès
       let timeBetweenDate = new Date().getTime() - item[0].createdDate.getTime();
 
-      return !(timeBetweenDate < Constants.LIMIT_BETWEEN_CREATION)
+      return !(timeBetweenDate < Constants.LIMIT_BETWEEN_CREATION);
     }
 
     return true;

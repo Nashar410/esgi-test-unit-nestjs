@@ -59,7 +59,7 @@ describe('ItemCreationGuard', () => {
     it("Cas Date autorisant de continuer - valide", async () => {
 
       jest.spyOn(itemService, 'findLastItemOfTodolist').mockImplementation(() => [itemValid]);
-      expect(await itemGuard.resolve('1')).toBeTruthy();
+      expect(await itemGuard.resolve('2')).toBeTruthy();
     });
 
     it("Cas pas d'item - invalide", async () => {
@@ -68,6 +68,11 @@ describe('ItemCreationGuard', () => {
       expect(await itemGuard.resolve('1')).toBeTruthy();
     });
 
+    it("Cas pas d'item - invalide", async () => {
+
+      jest.spyOn(itemService, 'findLastItemOfTodolist').mockImplementation(() => []);
+      expect(await itemGuard.resolve('1')).toBeTruthy();
+    });
 
   })
 });
