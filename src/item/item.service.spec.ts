@@ -1,152 +1,152 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { AppModule } from 'src/app.module';
-import { DatabaseModule } from 'src/database/database.module';
-import { MailerService } from 'src/shared/services/mailer/mailer.service';
-import { Todolist } from 'src/todolist/entities/todolist.entity';
-import { TodolistService } from 'src/todolist/todolist.service';
-import { User } from 'src/user/entities/user.entity';
-import { Item } from './entities/item.entity';
-import { ItemModule } from './item.module';
-import { ItemService } from './item.service';
+// import { Test, TestingModule } from '@nestjs/testing';
+// import { getRepositoryToken } from '@nestjs/typeorm';
+// import { AppModule } from 'src/app.module';
+// import { DatabaseModule } from 'src/database/database.module';
+// import { MailerService } from 'src/shared/services/mailer/mailer.service';
+// import { Todolist } from 'src/todolist/entities/todolist.entity';
+// import { TodolistService } from 'src/todolist/todolist.service';
+// import { User } from 'src/user/entities/user.entity';
+// import { Item } from './entities/item.entity';
+// import { ItemModule } from './item.module';
+// import { ItemService } from './item.service';
 
-class TodoListServiceFake{}
+// class TodoListServiceFake{}
 
-class MailerServiceFake {}
-class ItemReposirotyFake {}
+// class MailerServiceFake {}
+// class ItemReposirotyFake {}
 
-describe('ItemService', () => {
-  let service: ItemService;
-  let todolistServiceFake;
-  let mailerServiceFake;
-  let mockTodo;
-  let item;
+// describe('ItemService', () => {
+//   let service: ItemService;
+//   let todolistServiceFake;
+//   let mailerServiceFake;
+//   let mockTodo;
+//   let item;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, ItemModule],
-      providers: [
-        ItemService,
-        {
-          provide: getRepositoryToken(Item),
-          useClass: ItemReposirotyFake
-        },
-        {
-          provide: TodolistService,
-          useClass: TodoListServiceFake
-        },
-        {
-          provide: MailerService,
-          useClass: MailerServiceFake
-        }
-      ],
-    }).compile();
+//   beforeEach(async () => {
+//     const module: TestingModule = await Test.createTestingModule({
+//       imports: [AppModule, ItemModule],
+//       providers: [
+//         ItemService,
+//         {
+//           provide: getRepositoryToken(Item),
+//           useClass: ItemReposirotyFake
+//         },
+//         {
+//           provide: TodolistService,
+//           useClass: TodoListServiceFake
+//         },
+//         {
+//           provide: MailerService,
+//           useClass: MailerServiceFake
+//         }
+//       ],
+//     }).compile();
 
-    // Service & mocking
-    service = module.get<ItemService>(ItemService);
-    todolistServiceFake = module.get<TodolistService>(TodolistService);
-    mailerServiceFake = module.get<MailerService>(MailerService);
+//     // Service & mocking
+//     service = module.get<ItemService>(ItemService);
+//     todolistServiceFake = module.get<TodolistService>(TodolistService);
+//     mailerServiceFake = module.get<MailerService>(MailerService);
 
-    // data
-    mockTodo = new Todolist({id: "1"});
+//     // data
+//     mockTodo = new Todolist({id: "1"});
 
-    item = new Item({
-      id: "1",
-      name: "zza",
-      content: "e",
-      createdDate: new Date(),
-      todolist: mockTodo,
-    });
+//     item = new Item({
+//       id: "1",
+//       name: "zza",
+//       content: "e",
+//       createdDate: new Date(),
+//       todolist: mockTodo,
+//     });
 
-    jest.spyOn(todolistServiceFake, "findAllItems").mockImplementation(() => [
-      {
-        id: "10",
-        name: "a",
-        content: "e",
-        createdDate: new Date(),
-        todolist: mockTodo,
-      },
-      {
-        id: "2",
-        name: "999",
-        content: "7777e",
-        createdDate: new Date(),
-        todolist: mockTodo,
-      }
-    ]);
+//     jest.spyOn(todolistServiceFake, "findAllItems").mockImplementation(() => [
+//       {
+//         id: "10",
+//         name: "a",
+//         content: "e",
+//         createdDate: new Date(),
+//         todolist: mockTodo,
+//       },
+//       {
+//         id: "2",
+//         name: "999",
+//         content: "7777e",
+//         createdDate: new Date(),
+//         todolist: mockTodo,
+//       }
+//     ]);
 
 
-  });
+//   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+//   it('should be defined', () => {
+//     expect(service).toBeDefined();
+//   });
 
-  it('should say that the item is unique', async () => {
-    expect(await service.isItemUniqueInTodolist(item)).toBeTruthy();
-  });
+//   it('should say that the item is unique', async () => {
+//     expect(await service.isItemUniqueInTodolist(item)).toBeTruthy();
+//   });
 
-  it('should say that the item isnt unique', async () => {
-    jest.spyOn(todolistServiceFake, "findAllItems").mockImplementation(() => [
-      {
-        id: "10",
-        name: "a",
-        content: "e",
-        createdDate: new Date(),
-        todolist: undefined,
-      },
-      {
-        id: "2",
-        name: "999",
-        content: "7777e",
-        createdDate: new Date(),
-        todolist: undefined,
-      },
-      {
-        id: "1",
-        name: "a",
-        content: "e",
-        createdDate: new Date(),
-        todolist: mockTodo,
-      },
-      item
-    ]);
+//   it('should say that the item isnt unique', async () => {
+//     jest.spyOn(todolistServiceFake, "findAllItems").mockImplementation(() => [
+//       {
+//         id: "10",
+//         name: "a",
+//         content: "e",
+//         createdDate: new Date(),
+//         todolist: undefined,
+//       },
+//       {
+//         id: "2",
+//         name: "999",
+//         content: "7777e",
+//         createdDate: new Date(),
+//         todolist: undefined,
+//       },
+//       {
+//         id: "1",
+//         name: "a",
+//         content: "e",
+//         createdDate: new Date(),
+//         todolist: mockTodo,
+//       },
+//       item
+//     ]);
 
-    expect(await service.isItemUniqueInTodolist(item)).toBeFalsy();
-  });
+//     expect(await service.isItemUniqueInTodolist(item)).toBeFalsy();
+//   });
 
-  it('should send mail', () => {
+//   it('should send mail', () => {
 
-    const items: Item[] = [];
-    mockTodo.user = new User({email : "a"});
+//     const items: Item[] = [];
+//     mockTodo.user = new User({email : "a"});
 
-    for (let ind = 0; ind < 8; ind++){
-      items.push({
-        id: `${ind}`,
-        name: "a",
-        content: "e",
-        createdDate: new Date(),
-        todolist: mockTodo
-      })
-    }
-    jest.spyOn(mailerServiceFake, "sendMail").mockImplementation(() => true);
-    expect(service.sendMail(items)).toBeTruthy();
-  });
+//     for (let ind = 0; ind < 8; ind++){
+//       items.push({
+//         id: `${ind}`,
+//         name: "a",
+//         content: "e",
+//         createdDate: new Date(),
+//         todolist: mockTodo
+//       })
+//     }
+//     jest.spyOn(mailerServiceFake, "sendMail").mockImplementation(() => true);
+//     expect(service.sendMail(items)).toBeTruthy();
+//   });
 
-  it('should sendn\'t mail', () => {
+//   it('should sendn\'t mail', () => {
 
-    const items: Item[] = [];
-    for (let ind = 0; ind < 7; ind++){
-      items.push({
-        id: `${ind}`,
-        name: "a",
-        content: "e",
-        createdDate: new Date(),
-        todolist: new Todolist({})
-      })
-    }
+//     const items: Item[] = [];
+//     for (let ind = 0; ind < 7; ind++){
+//       items.push({
+//         id: `${ind}`,
+//         name: "a",
+//         content: "e",
+//         createdDate: new Date(),
+//         todolist: new Todolist({})
+//       })
+//     }
 
-    expect(service.sendMail(items)).toBeFalsy();
-  });
+//     expect(service.sendMail(items)).toBeFalsy();
+//   });
 
-});
+// });
