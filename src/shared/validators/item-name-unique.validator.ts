@@ -21,7 +21,9 @@ export class ItemNameUniqueConstraint implements ValidatorConstraintInterface{
         this.itemName = item.name;
 
         // on interoge le service de la todolist
-        return this.itemService.isItemUniqueInTodolist(item)         
+        if(this.itemService){
+            return this.itemService.isItemUniqueInTodolist(item)
+        }
     }
     
     /**

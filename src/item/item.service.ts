@@ -42,7 +42,6 @@ export class ItemService {
    */
   async sendMail(todoListId: string) {
     const items = await this.todolistService.findAllItems(todoListId);
-
     if (items.length === Constants.ITEM_NUMBER_TO_SEND_MAIL) {
       // On récupère le mail de l'user
       return this.mailerService.sendMail(items[0].todolist.user.email, Constants.MAIL_ITEM_CAPACITY_SOON_EXCEED);
@@ -160,7 +159,7 @@ export class ItemService {
         }
       }
         // Throw d'une erreur avec la réponse finale en message
-        throw new Error(strError) ;
+        throw new Error(strError);
     }
   }
 
