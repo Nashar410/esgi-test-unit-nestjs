@@ -1,4 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CreateItemDto } from 'src/item/dto/create-item.dto';
 import { ItemService } from 'src/item/item.service';
 import { Constants } from 'src/shared/constants';
 
@@ -15,30 +16,12 @@ export class ItemCreationGuard implements CanActivate {
       .switchToHttp()
       .getRequest()
       .params
-      .createItemDto
-      .todolist
-      .id);
+      .createItemDto);
   }
 
-  async resolve(todolistId: string) {
-    
-    // On récupère la liste des items
-    const item = await this.itemService.findLastItemOfTodolist(todolistId);
+  async resolve(createItem: CreateItemDto) {
 
-    // Si pas d'item, on peut ajouter
-    if (item.length <= 0) return true;
-    if (item.length > Constants.MAX_ITEM_LENGTH) return false;
+    return await this.itemService.isItemUniqueInTodolist({...createItem, createdDate: new Date()});
 
-    // L'item est présent, on vérifie
-    if (!!item[0].createdDate) {
-      // Il y a une date, on la compare à la date actuelle
-      // Si le résultat de la soustraction du temps de la date enregistrée
-      // et celui de la date actuelle est infierieur à la limite, on refuse l'accès
-      let timeBetweenDate = new Date().getTime() - item[0].createdDate.getTime();
-
-      return !(timeBetweenDate < Constants.LIMIT_BETWEEN_CREATION);
-    }
-
-    return true;
   }
 }

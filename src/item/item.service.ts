@@ -7,6 +7,7 @@ import { TodolistService } from 'src/todolist/todolist.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Constants } from 'src/shared/constants';
 import { MailerService } from 'src/shared/services/mailer/mailer.service';
+import { validate } from 'class-validator';
 
 
 @Injectable()
@@ -20,19 +21,28 @@ export class ItemService {
   ){}
   
   async create(createItemDto: CreateItemDto) {
-    const item = await this.itemRepository.create(createItemDto);
-    if (!!item) {
-      throw new Error(Constants.ERROR_MSG_ITEM_DIDNT_CREATE);
+    try{
+      await this.isItemBeCreated(createItemDto);
+      await this.isItemTimeLimit(createItemDto);
+      await this.isValid(new Item(createItemDto));
+      const item = await this.itemRepository.create(createItemDto);
+      if (!!item) {
+        throw new Error(Constants.ERROR_MSG_ITEM_DIDNT_CREATE);
+      }
+      return this.sendMail(item.todolist.id)
+    
+    } catch (error) {
+      throw error;
     }
-    const todolistItems = await this.todolistService.findAllItems(item.todolist.id);
-    return this.sendMail(todolistItems)
   }
 
   /**
    * Décide d'envoyé un mail ou non
    * @param todolistItems 
    */
-  sendMail(items: Item[]) {
+  async sendMail(todoListId: string) {
+    const items = await this.todolistService.findAllItems(todoListId);
+
     if (items.length === Constants.ITEM_NUMBER_TO_SEND_MAIL) {
       // On récupère le mail de l'user
       return this.mailerService.sendMail(items[0].todolist.user.email, Constants.MAIL_ITEM_CAPACITY_SOON_EXCEED);
@@ -118,6 +128,67 @@ export class ItemService {
         }
     });
     return result;
+  }
+
+  async isValid(item: Item) {
+    // récupération des possibles erreurs
+    const errors = await validate(new CreateItemDto(item));
+
+    //s'il y a des erreurs
+    if (errors.length) {
+
+      // préparation de la réponse final
+      let strError = '';
+
+      // Loop sur les erreurs pour les récupérer toutes
+      for (const error of errors) {
+
+        // S'il y a des contraintes
+        if (!!error.constraints) {
+          
+          // Loop sur les contraintes pour les récupérer toutes
+          for (const constraint in error.constraints) {
+
+            // concaténer les erreurs à la réponse finales
+            strError += `${error.constraints[constraint]}`;
+          }
+        } else {
+
+          // Des erreurs et pas de contraintes, ne doit jamais arrivé
+          // défaillance de la librairie class-validator
+          strError += Constants.ERROR_MSG_UNKNOWN_ERROR;
+        }
+      }
+        // Throw d'une erreur avec la réponse finale en message
+        throw new Error(strError) ;
+    }
+  }
+
+  async isItemTimeLimit(item: Item | CreateItemDto) {
+    
+    // On récupère la liste des items
+    const items = await this.findLastItemOfTodolist(item.todolist.id);
+
+    // L'item est présent, on vérifie
+    if (!!items[0].createdDate) {
+      // Il y a une date, on la compare à la date actuelle
+      // Si le résultat de la soustraction du temps de la date enregistrée
+      // et celui de la date actuelle est infierieur à la limite, on refuse l'accès
+      let timeBetweenDate = new Date().getTime() - items[0].createdDate.getTime();
+
+      const err = !(timeBetweenDate < Constants.LIMIT_BETWEEN_CREATION);
+      if (err) {
+        throw new Error(Constants.ERROR_MSG_LIMIT_BETWEEN_ITEM_CREATION)
+      }
+    }    
+  }
+
+  async isItemBeCreated(item: CreateItemDto | Item) {
+    // On récupère la liste des items
+    const items = await this.todolistService.findAllItems(item.todolist.id);
+    // Si pas d'item, on peut ajouter
+    if (items.length <= 0) return;
+    if (items.length >= Constants.MAX_ITEM_LENGTH) throw new Error(Constants.ERROR_MSG_LIMIT_ITEM_EXCEED);
   }
   
 }

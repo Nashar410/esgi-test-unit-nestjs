@@ -37,5 +37,7 @@ export class Constants {
     public static readonly ERROR_MSG_ITEM_NAME_NOT_UNIQUE = `L'item soumis existe déjà.\n`;
     public static readonly ERROR_MSG_LENGTH_CONTENT = `Le contenu de l'item soumis doit être comprit entre ${Constants.MIN_CONTENT_LENGTH_STR} et ${Constants.MAX_CONTENT_LENGTH_STR}.\n`;
     public static readonly ERROR_MSG_ITEM_DIDNT_CREATE = `L'item n'a pas pu être créée\n`;
+    public static readonly ERROR_MSG_LIMIT_ITEM_EXCEED = `La todolist a atteint le maximum de ${Constants.MAX_ITEM_LENGTH} items.`;
+    public static readonly ERROR_MSG_LIMIT_BETWEEN_ITEM_CREATION = `La dernière création d'item remonte à moins de ${180000/Constants.LIMIT_BETWEEN_CREATION} minutes.`;
 
 }
