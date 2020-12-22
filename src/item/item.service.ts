@@ -9,19 +9,17 @@ import { Constants } from 'src/shared/constants';
 import { MailerService } from 'src/shared/services/mailer/mailer.service';
 import { validate } from 'class-validator';
 
-
 @Injectable()
 export class ItemService {
-
   constructor(
     @InjectRepository(Item)
     private itemRepository: Repository<Item>,
     private todolistService: TodolistService,
-    private mailerService: MailerService
-  ){}
-  
+    private mailerService: MailerService,
+  ) {}
+
   async create(createItemDto: CreateItemDto) {
-    try{
+    try {
       await this.isItemBeCreated(createItemDto);
       await this.isItemTimeLimit(createItemDto);
       await this.isValid(new Item(createItemDto));
@@ -29,8 +27,7 @@ export class ItemService {
       if (!!item) {
         throw new Error(Constants.ERROR_MSG_ITEM_DIDNT_CREATE);
       }
-      return this.sendMail(item.todolist.id)
-    
+      return this.sendMail(item.todolist.id);
     } catch (error) {
       throw error;
     }
@@ -38,13 +35,16 @@ export class ItemService {
 
   /**
    * Décide d'envoyé un mail ou non
-   * @param todolistItems 
+   * @param todolistItems
    */
   async sendMail(todoListId: string) {
     const items = await this.todolistService.findAllItems(todoListId);
     if (items.length === Constants.ITEM_NUMBER_TO_SEND_MAIL) {
       // On récupère le mail de l'user
-      return this.mailerService.sendMail(items[0].todolist.user.email, Constants.MAIL_ITEM_CAPACITY_SOON_EXCEED);
+      return this.mailerService.sendMail(
+        items[0].todolist.user.email,
+        Constants.MAIL_ITEM_CAPACITY_SOON_EXCEED,
+      );
     }
     return false;
   }
@@ -62,12 +62,12 @@ export class ItemService {
   }
 
   async update(id: string, updateItemDto: UpdateItemDto) {
-    return await this.itemRepository.update(id, updateItemDto)
+    return await this.itemRepository.update(id, updateItemDto);
   }
 
   /**
    * Supprimer un item par id
-   * @param id 
+   * @param id
    */
   async delete(id: string) {
     return await this.itemRepository.delete(id);
@@ -75,7 +75,7 @@ export class ItemService {
 
   /**
    * Supprimer un ensemble d'item
-   * @param items 
+   * @param items
    */
   async remove(items: Item[]) {
     return await this.itemRepository.remove(items);
@@ -84,87 +84,86 @@ export class ItemService {
   /**
    * Informe sur l'unicité d'un item dans la base de donnée
    * AU sein de sa todolist
-   * @param item 
+   * @param item
    */
   async isItemUniqueInTodolist(item: Item): Promise<boolean> {
     // Récupération des items de la todolist
-    const items: Item[] = (await this.todolistService.findAllItems(item.todolist.id));
-
+    const items: Item[] = await this.todolistService.findAllItems(
+      item.todolist.id,
+    );
     // Push du nouvelle item
     items.push(item);
 
-    // Réponse sur l'unicité donnée ; 
+    // Réponse sur l'unicité donnée ;
     // les size après coup
-    const withoutDup = this.removeDuplicates(items, 'name'); 
-    return withoutDup.length === items.length 
+    const withoutDup = this.removeDuplicates(items, 'name');
+    const res = withoutDup.length === items.length;
+    if (!res) {
+      throw new Error(Constants.ERROR_MSG_ITEM_NAME_NOT_UNIQUE);
+    }
 
+    return res;
   }
 
   /**
    * Retourne le dernier item créé
-   * @param todoListId 
+   * @param todoListId
    */
   async findLastItemOfTodolist(todoListId: string) {
     return await this.itemRepository.find({
       where: {
-        todolist: todoListId
+        todolist: todoListId,
       },
-      relations: ["todolist"],
+      relations: ['todolist'],
       order: {
-        createdDate : 'DESC'
+        createdDate: 'DESC',
       },
-      take: 1
+      take: 1,
     });
   }
 
   private removeDuplicates(array, key) {
-    let lookup = {};
-    let result = [];
-    array.forEach(element => {
-        if(!lookup[element[key]]) {
-            lookup[element[key]] = true;
-            result.push(element);
-        }
+    const lookup = {};
+    const result = [];
+    array.forEach((element) => {
+      if (!lookup[element[key]]) {
+        lookup[element[key]] = true;
+        result.push(element);
+      }
     });
     return result;
   }
 
   async isValid(item: Item) {
+    const toValidate = new CreateItemDto(item);
     // récupération des possibles erreurs
-    const errors = await validate(new CreateItemDto(item));
-
+    const errors = await validate(toValidate);
     //s'il y a des erreurs
     if (errors.length) {
-
       // préparation de la réponse final
       let strError = '';
 
       // Loop sur les erreurs pour les récupérer toutes
       for (const error of errors) {
-
         // S'il y a des contraintes
         if (!!error.constraints) {
-          
           // Loop sur les contraintes pour les récupérer toutes
           for (const constraint in error.constraints) {
-
             // concaténer les erreurs à la réponse finales
             strError += `${error.constraints[constraint]}`;
           }
         } else {
-
           // Des erreurs et pas de contraintes, ne doit jamais arrivé
           // défaillance de la librairie class-validator
           strError += Constants.ERROR_MSG_UNKNOWN_ERROR;
         }
       }
-        // Throw d'une erreur avec la réponse finale en message
-        throw new Error(strError);
+      // Throw d'une erreur avec la réponse finale en message
+      throw new Error(strError);
     }
   }
 
   async isItemTimeLimit(item: Item | CreateItemDto) {
-    
     // On récupère la liste des items
     const items = await this.findLastItemOfTodolist(item.todolist.id);
 
@@ -173,13 +172,14 @@ export class ItemService {
       // Il y a une date, on la compare à la date actuelle
       // Si le résultat de la soustraction du temps de la date enregistrée
       // et celui de la date actuelle est infierieur à la limite, on refuse l'accès
-      let timeBetweenDate = new Date().getTime() - items[0].createdDate.getTime();
+      const timeBetweenDate =
+        new Date().getTime() - items[0].createdDate.getTime();
 
       const err = !(timeBetweenDate < Constants.LIMIT_BETWEEN_CREATION);
       if (err) {
-        throw new Error(Constants.ERROR_MSG_LIMIT_BETWEEN_ITEM_CREATION)
+        throw new Error(Constants.ERROR_MSG_LIMIT_BETWEEN_ITEM_CREATION);
       }
-    }    
+    }
   }
 
   async isItemBeCreated(item: CreateItemDto | Item) {
@@ -187,7 +187,7 @@ export class ItemService {
     const items = await this.todolistService.findAllItems(item.todolist.id);
     // Si pas d'item, on peut ajouter
     if (items.length <= 0) return;
-    if (items.length >= Constants.MAX_ITEM_LENGTH) throw new Error(Constants.ERROR_MSG_LIMIT_ITEM_EXCEED);
+    if (items.length >= Constants.MAX_ITEM_LENGTH)
+      throw new Error(Constants.ERROR_MSG_LIMIT_ITEM_EXCEED);
   }
-  
 }

@@ -7,11 +7,10 @@ import { Todolist } from './entities/todolist.entity';
 
 @Injectable()
 export class TodolistService {
-
   constructor(
     @InjectRepository(Todolist)
-    private todolistRepository: Repository<Todolist>
-    ) { }
+    private todolistRepository: Repository<Todolist>,
+  ) {}
 
   async create(createTodolistDto: CreateTodolistDto) {
     return await this.todolistRepository.create(createTodolistDto);
@@ -21,7 +20,10 @@ export class TodolistService {
     return await this.todolistRepository.find();
   }
 
-  async findOne(id: string, options?: FindOneOptions<Todolist>): Promise<Todolist> {;
+  async findOne(
+    id: string,
+    options?: FindOneOptions<Todolist>,
+  ): Promise<Todolist> {
     return await this.todolistRepository.findOne(id);
   }
 
@@ -31,12 +33,9 @@ export class TodolistService {
 
   /**
    * Return all of a todolist items
-   * @param id 
+   * @param id
    */
   async findAllItems(id: string) {
     return (await this.todolistRepository.findOne(id)).items;
   }
-
-
-
 }

@@ -9,20 +9,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         host: 'localhost',
         port: 5432,
         username: 'root',
-        password: 'root', 
+        password: 'root',
         database: 'todolist',
         migrationsRun: true,
-        entities: [
-          __dirname + '/../**/*.entity{.ts,.js}',
-        ],
+        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: true,
-        migrations: [
-          __dirname + "/../**/migrations/*.ts"
-        ],
-        keepConnectionAlive: true
+        migrations: [__dirname + '/../**/migrations/*.ts'],
+        keepConnectionAlive: true,
       }),
-    })
+    }),
   ],
   exports: [TypeOrmModule],
 })
-export class DatabaseModule { }
+export class DatabaseModule {}

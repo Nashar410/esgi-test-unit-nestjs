@@ -17,6 +17,6 @@ describe('MailerService', () => {
   });
 
   it('should send the mail confirmation', () => {
-    expect(service.sendMail('test', "content")).toBeTruthy();
-  })
+    expect(service.sendMail('test', 'content')).toBeTruthy();
+  });
 });

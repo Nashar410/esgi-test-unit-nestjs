@@ -9,12 +9,10 @@ import { validate } from 'class-validator';
 
 @Injectable()
 export class UserService {
-
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>
-  ) { }
-  
+    private userRepository: Repository<User>,
+  ) {}
 
   /**
    * Validate and create and user
@@ -54,18 +52,18 @@ export class UserService {
    * @deprecated
    * @forbidden
    * @warning
-   * @param password 
- */
+   * @param password
+   */
   private unsecureCryptPassword(unsecureCryptedPassword: string): string {
     return unsecureCryptedPassword + Constants.UNESECURE_SALT;
   }
 
   /**
-  * Decrypt an unsecure password
-  * @deprecated
-  * @forbidden   
-  * @warning
-  * @param unsecureCryptPassword 
+   * Decrypt an unsecure password
+   * @deprecated
+   * @forbidden
+   * @warning
+   * @param unsecureCryptPassword
    */
   public unsecureDecryptPassword(unsecureCryptPassword: string) {
     return unsecureCryptPassword.replace(Constants.UNESECURE_SALT, '');
@@ -73,7 +71,7 @@ export class UserService {
 
   /**
    * Instancie un DTO User qui contient la logique de validation d'un user
-   * @param user 
+   * @param user
    * @throws la liste des erreurs
    * @return user si pas d'erreur, le même objet est retourné
    */
@@ -83,36 +81,29 @@ export class UserService {
 
     //s'il y a des erreurs
     if (errors.length) {
-
       // préparation de la réponse final
       let strError = '';
 
       // Loop sur les erreurs pour les récupérer toutes
       for (const error of errors) {
-
         // S'il y a des contraintes
         if (!!error.constraints) {
-          
           // Loop sur les contraintes pour les récupérer toutes
           for (const constraint in error.constraints) {
-
             // concaténer les erreurs à la réponse finales
             strError += `${error.constraints[constraint]}`;
           }
         } else {
-
           // Des erreurs et pas de contraintes, ne doit jamais arrivé
           // défaillance de la librairie class-validator
           strError += Constants.ERROR_MSG_UNKNOWN_ERROR;
         }
       }
-        // Throw d'une erreur avec la réponse finale en message
-        throw new Error(strError) ;
+      // Throw d'une erreur avec la réponse finale en message
+      throw new Error(strError);
     } else {
-      
       // Pas d'erreur, on return l'user
       return user;
-    } 
+    }
   }
-
 }

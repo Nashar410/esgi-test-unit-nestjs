@@ -19,7 +19,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "clear_jest": "jest --clearCache"
+    "test:clearCache": "jest --clearCache"
   },
   "dependencies": {
     "@nestjs/common": "^7.5.1",

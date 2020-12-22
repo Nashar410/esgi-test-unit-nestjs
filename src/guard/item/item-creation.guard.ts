@@ -8,20 +8,18 @@ import { Constants } from 'src/shared/constants';
  */
 @Injectable()
 export class ItemCreationGuard implements CanActivate {
+  constructor(private itemService: ItemService) {}
 
-  constructor(private itemService: ItemService) { }
-  
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    return this.resolve(context
-      .switchToHttp()
-      .getRequest()
-      .params
-      .createItemDto);
+    return this.resolve(
+      context.switchToHttp().getRequest().params.createItemDto,
+    );
   }
 
   async resolve(createItem: CreateItemDto) {
-
-    return await this.itemService.isItemUniqueInTodolist({...createItem, createdDate: new Date()});
-
+    return await this.itemService.isItemUniqueInTodolist({
+      ...createItem,
+      createdDate: new Date(),
+    });
   }
 }
