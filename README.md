@@ -24,7 +24,94 @@
 
 ## Description
 
+Ce projet a été créée pour le cours de Test unitaire et foncitonnel de la 4IW3 de l'ESGI. Il utilise NestJs, un puissant framework backend utilisant NodeJS et Typescript :
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+
+## Particularité
+
+### Emplacement des fichiers de tests unitaires
+Conformément aux best practices fourni par la documentation de NestJS, les fichiers de test unitaire sont à placer au plus prêt des classes testés. Il s'agit de tout les fichiers se terminant par ***.spec.ts**.
+
+### DTO et class-validator
+Toujours conformément aux best practices du framework, les données circulent dans le back sous forme de DTO : des class mimant les class des entités qui persisteront dans la base de données. 
+NestJS recommandant l'utilisation de **class-validator**, un framework permettant une vérification automatique des propriétés selon un schéma fourni. Nous l'avons directement intégré aux DTO. En voici un exemple :
+
+```typescript
+// DTO pour la création d'un utilisateur
+export class CreateUserDto {
+
+  @IsUUID('all', {  // Décorateur de class-validator vérifiant si la propriété "id" est un uuid
+    message: Constants.ERROR_MSG_IS_UUID, // Surchage du message d'erreur
+  })
+  @IsString({ //  Décorateur de class-validator vérifiant si la propriété "id" est un string
+    message: Constants.ERROR_MSG_IS_STRING, // Surchage du message d'erreur
+  })
+  @IsNotEmpty({  //Décorateur de class-validator vérifiant si la propriété "id" n'est pas vide
+    message: Constants.ERROR_MSG_IS_NOT_EMPTY, // Surchage du message d'erreur
+  })
+  id: string;
+
+  @IsEmail(
+    { allow_display_name: false }, // Option, spécifique à ce décorator
+    {
+      message: Constants.ERROR_MSG_IS_EMAIL,
+    },
+  )
+  @IsString({
+    message: Constants.ERROR_MSG_IS_STRING,
+  })
+  @IsNotEmpty({
+    message: Constants.ERROR_MSG_IS_NOT_EMPTY,
+  })
+  email: string;
+
+  @Length(Constants.MIN_PWD_STR, Constants.MAX_PWD_STR, {
+    message: Constants.ERROR_MSG_LENGTH_PWD,
+  })
+  @IsString({
+    message: Constants.ERROR_MSG_IS_STRING,
+  })
+  password: string;
+
+  @IsString({
+    message: Constants.ERROR_MSG_IS_STRING,
+  })
+  @IsNotEmpty({
+    message: Constants.ERROR_MSG_IS_NOT_EMPTY,
+  })
+  firstname: string;
+
+  @IsString({
+    message: Constants.ERROR_MSG_IS_STRING,
+  })
+  @IsNotEmpty({
+    message: Constants.ERROR_MSG_IS_NOT_EMPTY,
+  })
+  lastname: string;
+
+  @IsUserHaveMinimumAge({ // Custom @ pour une validation personnalisée de la propriété "birthDate"
+    message: Constants.ERROR_MSG_USER_WRONG_AGE,
+  })
+  @IsDate({
+    message: Constants.ERROR_MSG_IS_DATE,
+  })
+  @IsNotEmpty({
+    message: Constants.ERROR_MSG_IS_NOT_EMPTY,
+  })
+  birthDate: Date;
+
+  @IsOptional()
+  isValid?: boolean;
+
+  @IsOptional()
+  todolist: Todolist;
+
+  // Constructeur générique
+  constructor(user: Partial<User>) {
+    Object.assign(this, user);
+  }
+}
+```
 
 ## Installation
 
@@ -51,11 +138,6 @@ $ npm run start:prod
 # unit tests
 $ npm run test
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
 ```
 
 ## Support
