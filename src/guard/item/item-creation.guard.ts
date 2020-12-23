@@ -19,7 +19,6 @@ export class ItemCreationGuard implements CanActivate {
   async resolve(createItem: CreateItemDto) {
     return await this.itemService.isItemUniqueInTodolist({
       ...createItem,
-      createdDate: new Date(),
     });
   }
 }

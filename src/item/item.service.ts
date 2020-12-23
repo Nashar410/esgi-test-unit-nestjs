@@ -11,6 +11,7 @@ import { validate } from 'class-validator';
 
 @Injectable()
 export class ItemService {
+
   constructor(
     @InjectRepository(Item)
     private itemRepository: Repository<Item>,
@@ -86,13 +87,13 @@ export class ItemService {
    * AU sein de sa todolist
    * @param item
    */
-  async isItemUniqueInTodolist(item: Item): Promise<boolean> {
+  async isItemUniqueInTodolist(item: CreateItemDto): Promise<boolean> {
     // Récupération des items de la todolist
     const items: Item[] = await this.todolistService.findAllItems(
       item.todolist.id,
     );
     // Push du nouvelle item
-    items.push(item);
+    items.push({...item, createdDate: null});
 
     // Réponse sur l'unicité donnée ;
     // les size après coup
@@ -103,6 +104,16 @@ export class ItemService {
     }
 
     return res;
+  }
+
+  async isItemContentLength(item: CreateItemDto) {
+    if (!!item.content.length) {
+      if(item.content.length >= Constants.MAX_CONTENT_LENGTH_STR) {
+        throw new Error(Constants.ERROR_MSG_LENGTH_CONTENT);
+      }
+      return true;
+    }
+    return false;
   }
 
   /**

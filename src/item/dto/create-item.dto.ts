@@ -19,7 +19,6 @@ export class CreateItemDto {
   @IsNotEmpty({ message: Constants.ERROR_MSG_IS_NOT_EMPTY })
   id: string;
 
-  // TODO faire une guard pour l'unicité du name
   @IsString({ message: Constants.ERROR_MSG_IS_STRING })
   @IsNotEmpty({ message: Constants.ERROR_MSG_IS_NOT_EMPTY })
   name: string;

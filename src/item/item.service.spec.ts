@@ -111,20 +111,18 @@ describe('ItemService', () => {
     expect(service).toBeDefined();
   });
 
-  it('Cas content supérieur à 1000 caractère', async () => {
-    jest
-      .spyOn(todolistServiceFake, 'findAllItems')
-      .mockImplementationOnce(() => []);
+  it('Cas content supérieur à 1000 caractères', async () => {
 
     const item1 = new Item({
       id: 'fa65a008-ee7c-421b-8ead-756bffcf48fb',
       name: 'zza',
-      content: new Array(Constants.MAX_CONTENT_LENGTH_STR).join('abc'),
+      content: new Array(+Constants.MAX_CONTENT_LENGTH_STR).join('abc'),
       createdDate: new Date(),
       todolist: mockTodo,
     });
-    await expect(service.isValid(item1)).rejects.toThrow(
-      Constants.ERROR_MSG_LENGTH_CONTENT,
+    
+    await expect(service.isItemContentLength(item1)).rejects.toThrow(
+      Constants.ERROR_MSG_LENGTH_CONTENT
     );
   });
 
@@ -141,7 +139,7 @@ describe('ItemService', () => {
       todolist: mockTodo,
     });
 
-    expect(await service.isValid(item1)).toBeUndefined();
+    expect(await service.isItemContentLength(item1)).toBeTruthy();
   });
 
   it(`Devrait envoyer un mail`, () => {
