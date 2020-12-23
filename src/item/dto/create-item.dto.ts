@@ -1,15 +1,5 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsUUID,
-  Length,
-  Validate,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, Length } from 'class-validator';
 import { Constants } from 'src/shared/constants';
-import {
-  IsItemNameUnique,
-  ItemNameUniqueConstraint,
-} from 'src/shared/validators/item-name-unique.validator';
 import { Todolist } from 'src/todolist/entities/todolist.entity';
 import { Item } from '../entities/item.entity';
 

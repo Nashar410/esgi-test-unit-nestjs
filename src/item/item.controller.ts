@@ -13,6 +13,7 @@ import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { ItemCreationGuard } from 'src/guard/item/item-creation.guard';
 import { CanUserCreateItemGuard } from 'src/guard/item/can-user-create-item.guard';
+import { ItemNameUniqueGuard } from 'src/guard/item/item-name-unique.guard';
 
 @Controller('item')
 export class ItemController {
@@ -20,6 +21,7 @@ export class ItemController {
 
   @UseGuards(CanUserCreateItemGuard)
   @UseGuards(ItemCreationGuard)
+  @UseGuards(ItemNameUniqueGuard)
   @Post()
   create(@Body() createItemDto: CreateItemDto) {
     return this.itemService.create(createItemDto);

@@ -7,16 +7,16 @@ import { ItemService } from 'src/item/item.service';
 
 @Injectable()
 export class ItemNameUniqueGuard implements CanActivate {
-
-  constructor(private itemService: ItemService){}
+  constructor(private itemService: ItemService) {}
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    return this.resolve(context.switchToHttp().getRequest().params.createItemDto);
+    return this.resolve(
+      context.switchToHttp().getRequest().params.createItemDto,
+    );
   }
 
   async resolve(item: CreateItemDto) {
     return this.itemService.isItemContentLength(item);
-    
   }
 }

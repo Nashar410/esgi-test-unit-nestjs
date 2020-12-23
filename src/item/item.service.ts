@@ -11,7 +11,6 @@ import { validate } from 'class-validator';
 
 @Injectable()
 export class ItemService {
-
   constructor(
     @InjectRepository(Item)
     private itemRepository: Repository<Item>,
@@ -21,9 +20,10 @@ export class ItemService {
 
   async create(createItemDto: CreateItemDto) {
     try {
-      await this.isItemBeCreated(createItemDto);
+      await this.isItemNumberExceed(createItemDto);
       await this.isItemTimeLimit(createItemDto);
       await this.isValid(new Item(createItemDto));
+      await this.isItemContentLength(createItemDto);
       const item = await this.itemRepository.create(createItemDto);
       if (!!item) {
         throw new Error(Constants.ERROR_MSG_ITEM_DIDNT_CREATE);
@@ -93,7 +93,7 @@ export class ItemService {
       item.todolist.id,
     );
     // Push du nouvelle item
-    items.push({...item, createdDate: null});
+    items.push({ ...item, createdDate: null });
 
     // Réponse sur l'unicité donnée ;
     // les size après coup
@@ -106,9 +106,13 @@ export class ItemService {
     return res;
   }
 
+  /**
+   * Vérifie que le content d'un item a la taille désiré
+   * @param item
+   */
   async isItemContentLength(item: CreateItemDto) {
     if (!!item.content.length) {
-      if(item.content.length >= Constants.MAX_CONTENT_LENGTH_STR) {
+      if (item.content.length >= Constants.MAX_CONTENT_LENGTH_STR) {
         throw new Error(Constants.ERROR_MSG_LENGTH_CONTENT);
       }
       return true;
@@ -174,6 +178,10 @@ export class ItemService {
     }
   }
 
+  /**
+   * Vérifie si le dernière item enregistré a plus de 30min
+   * @param item
+   */
   async isItemTimeLimit(item: Item | CreateItemDto) {
     // On récupère la liste des items
     const items = await this.findLastItemOfTodolist(item.todolist.id);
@@ -193,7 +201,11 @@ export class ItemService {
     }
   }
 
-  async isItemBeCreated(item: CreateItemDto | Item) {
+  /**
+   * Vérifie que le nombre d'item dans la todolist est conforme
+   * @param item
+   */
+  async isItemNumberExceed(item: CreateItemDto | Item) {
     // On récupère la liste des items
     const items = await this.todolistService.findAllItems(item.todolist.id);
     // Si pas d'item, on peut ajouter

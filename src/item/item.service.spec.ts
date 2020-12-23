@@ -112,7 +112,6 @@ describe('ItemService', () => {
   });
 
   it('Cas content supérieur à 1000 caractères', async () => {
-
     const item1 = new Item({
       id: 'fa65a008-ee7c-421b-8ead-756bffcf48fb',
       name: 'zza',
@@ -120,10 +119,22 @@ describe('ItemService', () => {
       createdDate: new Date(),
       todolist: mockTodo,
     });
-    
+
     await expect(service.isItemContentLength(item1)).rejects.toThrow(
-      Constants.ERROR_MSG_LENGTH_CONTENT
+      Constants.ERROR_MSG_LENGTH_CONTENT,
     );
+  });
+
+  it('Cas pas de content', async () => {
+    const item1 = new Item({
+      id: 'fa65a008-ee7c-421b-8ead-756bffcf48fb',
+      name: 'zza',
+      content: '',
+      createdDate: new Date(),
+      todolist: mockTodo,
+    });
+
+    expect(await service.isItemContentLength(item1)).toBeFalsy();
   });
 
   it('Cas inférieur à 1000 caractère', async () => {
@@ -195,7 +206,7 @@ describe('ItemService', () => {
       .spyOn(todolistServiceFake, 'findAllItems')
       .mockImplementationOnce(() => items);
     expect(
-      await service.isItemBeCreated(new CreateItemDto(item99)),
+      await service.isItemNumberExceed(new CreateItemDto(item99)),
     ).toBeUndefined();
   });
 
@@ -213,7 +224,7 @@ describe('ItemService', () => {
       .spyOn(todolistServiceFake, 'findAllItems')
       .mockImplementationOnce(() => items);
     await expect(
-      service.isItemBeCreated(new CreateItemDto(item99)),
+      service.isItemNumberExceed(new CreateItemDto(item99)),
     ).rejects.toThrow(Constants.ERROR_MSG_LIMIT_ITEM_EXCEED);
   });
 
