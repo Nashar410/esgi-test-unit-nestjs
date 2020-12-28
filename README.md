@@ -30,7 +30,7 @@ Ce projet a été créée pour le cours de Test unitaire et foncitonnel de la 4I
 ## Particularité
 
 ### Emplacement des fichiers de tests unitaires
-Conformément aux best practices fourni par la documentation de NestJS, les fichiers de test unitaire sont à placer au plus prêt des classes testés. Il s'agit de tout les fichiers se terminant par ***.spec.ts**.
+Conformément aux best practices fournis par la documentation de NestJS, les fichiers de test unitaire sont à placer au plus prêt des classes testées. Il s'agit de tous les fichiers se terminant par ***.spec.ts**.
 
 ### DTO et class-validator
 Toujours conformément aux best practices du framework, les données circulent dans le back sous forme de DTO : des class mimant les class des entités qui persisteront dans la base de données. 
@@ -65,29 +65,7 @@ export class CreateUserDto {
   })
   email: string;
 
-  @Length(Constants.MIN_PWD_STR, Constants.MAX_PWD_STR, {
-    message: Constants.ERROR_MSG_LENGTH_PWD,
-  })
-  @IsString({
-    message: Constants.ERROR_MSG_IS_STRING,
-  })
-  password: string;
-
-  @IsString({
-    message: Constants.ERROR_MSG_IS_STRING,
-  })
-  @IsNotEmpty({
-    message: Constants.ERROR_MSG_IS_NOT_EMPTY,
-  })
-  firstname: string;
-
-  @IsString({
-    message: Constants.ERROR_MSG_IS_STRING,
-  })
-  @IsNotEmpty({
-    message: Constants.ERROR_MSG_IS_NOT_EMPTY,
-  })
-  lastname: string;
+  ...
 
   @IsUserHaveMinimumAge({ // Custom @ pour une validation personnalisée de la propriété "birthDate"
     message: Constants.ERROR_MSG_USER_WRONG_AGE,
@@ -99,9 +77,6 @@ export class CreateUserDto {
     message: Constants.ERROR_MSG_IS_NOT_EMPTY,
   })
   birthDate: Date;
-
-  @IsOptional()
-  isValid?: boolean;
 
   @IsOptional()
   todolist: Todolist;
@@ -139,6 +114,11 @@ $ npm run start:prod
 $ npm run test
 
 ```
+
+## Contributeur
+
+- LIMA Milan
+- JACQUENET Jean Christophe
 
 ## Support
 
